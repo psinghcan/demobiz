@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: header" />
+<body>
+
+
+
+<section id="main-section" class="container-fluid">
+    <div class="container">
+        <h1>Persons</h1>
+        <table>
+            <thead>
+                <tr>
+                    <td>firstName</td>
+                    <td>lastName</td>
+                    <td>age</td>
+                    <td>email</td>
+                    <td>phone</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="person : ${persons}">
+                    <td th:text="${person.firstName}">firstname</td>
+                    <td th:text="${person.lastName}">firstname</td>
+                    <td th:text="${person.age}">firstname</td>
+                    <td th:text="${person.email}">firstname</td>
+                    <td th:text="${person.phone}">firstname</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+<footer>
+    <div th:include="fragments/scripts :: general" />
+</footer>
+</body>
+</html>
