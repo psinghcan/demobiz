@@ -19,6 +19,20 @@
             </tr>
             </tbody>
         </table>
+        <table class="table">
+            <thead class="thead-dar">
+                <tr>
+                    <th scope="col"#></th>
+                    <th scope="col"Detail></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="event : ${events}">
+                    <th th:text="${event.id}" scope="row">1</th>
+                    <td th:text="${event.message}"></td>
+                </tr>
+            </tbody>
+        </table>
     </section>
 </div>
 </body>
