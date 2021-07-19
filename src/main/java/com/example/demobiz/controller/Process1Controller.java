@@ -8,8 +8,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @Controller
 public class Process1Controller {
@@ -27,9 +33,17 @@ public class Process1Controller {
         return "process1";
     }
 
+    @GetMapping("/events")
+    public SseEmitter handle(){
+        SseEmitter sseEmitter = new SseEmitter();
+        threadPool.execute(() -> processService.longProcess(sseEmitter));
+        return sseEmitter;
+    }
+
     @PostMapping("/process1")
     public String step2(@ModelAttribute Model1 model1, Model model){
-        List<ProcessEvent> events = processService.longProcess();
+        List<ProcessEvent> events = new ArrayList<>();
+        processService.longProcess(null);
         String result = "nice work done: " + model1.getName();
         model.addAttribute("result", result);
         model.addAttribute("events", events);
@@ -37,5 +51,6 @@ public class Process1Controller {
     }
 
     private ProcessService processService;
+    private final ExecutorService threadPool = Executors.newCachedThreadPool();
 
 }
