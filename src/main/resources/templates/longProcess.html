@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="webjars/bootstrap/css/bootstrap.min.css">
+    <script src="/webjars/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="vendors/axios/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<div id="app" class="container">
+
+    <div class="row">
+        <div class="col-12 pt-5">
+            <button @click="processDictionary" class="btn btn-primary">Start Long Process</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Word</th>
+                    <th>MD5 Hash</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="item in messages">
+                    <td v-html="item.word"></td>
+                    <td v-html="item.hash"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="/vendors/others/stomp.min.js"></script>
+<script src="/vendors/sockjs/sockjs.min.js"></script>
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            width: 0,
+            messages: [],
+            progress: 0,
+        },
+        methods:{
+            handleProgressBarUpdateWithDetails(msg) {
+                var p = JSON.parse(msg.body);
+                this.progress =Math.round((p.current / p.max) * 100);
+                this.messages.unshift({word: p.word, hash: p.md5});
+
+            },
+            subscribe(frame){
+                console.log('Connected: ' + frame);
+                this.stompClient.subscribe('/ws-broadcast/update-progress-with-details', this.handleProgressBarUpdateWithDetails);
+            },
+            connect(){
+                var socket = new SockJS('/progress-ws', {transports: ['websocket']});
+                this.stompClient = Stomp.over(socket);
+                this.stompClient.reconnect_delay = 5000;
+                this.stompClient.connect({}, this.subscribe);
+            },
+
+            processDictionary()
+            {
+                this.progress = 0;
+                this.messages = [];
+
+                var tmp = {
+                    placeholder: "Test"
+                };
+
+                axios.post("/process-dictionary", tmp)
+                    .then(function (response) {
+                        //console.log(response.data);
+                    }.bind(this))
+                    .catch(function (error) {
+                        //console.error(error);
+                    }.bind(this));
+            },
+        },
+        mounted(){
+            this.connect();
+        }
+    });
+</script>
+</body>
+</html>

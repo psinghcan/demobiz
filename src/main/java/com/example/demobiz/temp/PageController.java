@@ -26,12 +26,6 @@ public class PageController {
         return "";
     }
 
-    @RequestMapping(value = "/temp")
-    public String index()
-    {
-        return "temp";
-    }
-
     @RequestMapping(value = "upload", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String upload(@RequestBody SampleViewModel sampleViewModel)
