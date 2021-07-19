@@ -40,6 +40,17 @@ public class Process1Controller {
         return sseEmitter;
     }
 
+    @GetMapping("/progressBar")
+    public String progressBar(){
+        return "progressBar";
+    }
+
+    @GetMapping("/longProcess")
+    public String longProcess(){
+        return "longProcess";
+    }
+
+
     @PostMapping("/process1")
     public String step2(@ModelAttribute Model1 model1, Model model){
         List<ProcessEvent> events = new ArrayList<>();
