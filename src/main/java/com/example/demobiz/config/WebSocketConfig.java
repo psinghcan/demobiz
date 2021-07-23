@@ -13,7 +13,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry)
     {
-        registry.enableSimpleBroker("/ws-broadcast");
+//        registry.enableSimpleBroker("/ws-broadcast");
+        registry.enableSimpleBroker("/ws-broadcast", "/long-process");
         registry.setApplicationDestinationPrefixes("/app");
     }
 

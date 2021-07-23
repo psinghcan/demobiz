@@ -2,7 +2,7 @@ package com.example.demobiz.controller;
 
 import com.example.demobiz.model.Model1;
 import com.example.demobiz.model.ProcessEvent;
-import com.example.demobiz.service.ProcessService;
+import com.example.demobiz.service.ProcessSseService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,16 +12,14 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 
 @Controller
 public class Process1Controller {
 
-    public Process1Controller(ProcessService processService){
-        this.processService = processService;
+    public Process1Controller(ProcessSseService processSseService){
+        this.processSseService = processSseService;
     }
 
 
@@ -36,7 +34,7 @@ public class Process1Controller {
     @GetMapping("/events")
     public SseEmitter handle(){
         SseEmitter sseEmitter = new SseEmitter();
-        threadPool.execute(() -> processService.longProcess(sseEmitter));
+        threadPool.execute(() -> processSseService.longProcess(sseEmitter));
         return sseEmitter;
     }
 
@@ -45,23 +43,23 @@ public class Process1Controller {
         return "progressBar";
     }
 
-    @GetMapping("/longProcess")
+    @GetMapping("/dictionaryWords")
     public String longProcess(){
-        return "longProcess";
+        return "dictionaryWords";
     }
 
 
     @PostMapping("/process1")
     public String step2(@ModelAttribute Model1 model1, Model model){
         List<ProcessEvent> events = new ArrayList<>();
-        processService.longProcess(null);
+        processSseService.longProcess(null);
         String result = "nice work done: " + model1.getName();
         model.addAttribute("result", result);
         model.addAttribute("events", events);
         return "process1result";
     }
 
-    private ProcessService processService;
+    private ProcessSseService processSseService;
     private final ExecutorService threadPool = Executors.newCachedThreadPool();
 
 }

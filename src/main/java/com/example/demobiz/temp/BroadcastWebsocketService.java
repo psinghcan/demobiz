@@ -22,7 +22,7 @@ public class BroadcastWebsocketService
         }
         catch (Exception exception)
         {
-            logger.error(exception.getMessage());
+            System.out.println("error in broad long running");
         }
     }
 
@@ -34,7 +34,9 @@ public class BroadcastWebsocketService
         }
         catch (Exception exception)
         {
-            logger.error(exception.getMessage());
+            System.out.println("error in broad long running");
         }
     }
+
+
 }
